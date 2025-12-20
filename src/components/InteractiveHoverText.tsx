@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface InteractiveHoverTextProps {
@@ -36,9 +36,7 @@ export function InteractiveHoverText({ text, className }: InteractiveHoverTextPr
 
                 let weight = MIN_WEIGHT;
                 if (dist < RADIUS) {
-                    // Normalize distance: 0 at center, 1 at edge of radius
                     const factor = 1 - dist / RADIUS;
-                    // Ease the curve (optional) - linear for now
                     weight = MIN_WEIGHT + (MAX_WEIGHT - MIN_WEIGHT) * factor;
                 }
 
@@ -49,17 +47,15 @@ export function InteractiveHoverText({ text, className }: InteractiveHoverTextPr
         const handleMouseLeave = () => {
             spans.forEach((span) => {
                 span.style.fontVariationSettings = `'wght' ${MIN_WEIGHT}`;
-            })
-        }
+            });
+        };
 
-        // Attach event listener to window or specific container? 
-        // The user request says "mouse cursor has a circular radius", usually implying it works globally or at least when near. 
-        // Attaching to window ensures it works even if you are just outside the text but within radius.
         window.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseleave", handleMouseLeave);
 
-        // Reset whenever mouse leaves window or we unmount (cleanup)
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseleave", handleMouseLeave);
         };
     }, [spans]);
 
